@@ -1,15 +1,12 @@
 package org.salesforce.repositories;
 
-import org.salesforce.dto.ClienteDTO;
 import org.salesforce.models.Cliente;
-import org.salesforce.models.Empresa;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//JOIN EMPRESA ON " +
-//        "EMPRESA.ID = CLIENTE.EMPRESA
+
 
 public class ClienteRepository {
 
@@ -74,7 +71,7 @@ public class ClienteRepository {
         return cliente;
     }
 
-    public void createCliente(ClienteDTO clienteDTO) {
+    public void createCliente(Cliente cliente) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO CLIENTE (" +
                      "clie_nome, clie_sobrenome, clie_email, clie_tipo, clie_idioma, clie_pais, " +
@@ -82,13 +79,13 @@ public class ClienteRepository {
                      " VALUES " +
                      "(?, ?, ?, ?, ?, ?, ?)")) {
 
-            st.setString(1, clienteDTO.nome());
-            st.setString(2, clienteDTO.sobrenome());
-            st.setString(3, clienteDTO.email());
-            st.setString(4, clienteDTO.tipo());
-            st.setString(5, clienteDTO.idioma());
-            st.setString(6, clienteDTO.pais());
-            st.setString(7, clienteDTO.telefone());
+            st.setString(1, cliente.getNome());
+            st.setString(2, cliente.getSobrenome());
+            st.setString(3, cliente.getEmail());
+            st.setString(4, cliente.getTipo());
+            st.setString(5, cliente.getIdioma());
+            st.setString(6, cliente.getPais());
+            st.setString(7, cliente.getTelefone());
 
             st.executeUpdate();
 
@@ -97,7 +94,7 @@ public class ClienteRepository {
         }
     }
 
-    public void updateCliente(ClienteDTO clienteDTO) {
+    public void updateCliente(Cliente cliente) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE CLIENTE " +
@@ -105,14 +102,14 @@ public class ClienteRepository {
                              "clie_idioma = ?, clie_pais = ?, clie_telefone = ? " +
                              "WHERE clie_id = ?")) {
 
-            st.setString(1, clienteDTO.nome());
-            st.setString(2, clienteDTO.sobrenome());
-            st.setString(3, clienteDTO.email());
-            st.setString(4, clienteDTO.tipo());
-            st.setString(5, clienteDTO.idioma());
-            st.setString(6, clienteDTO.pais());
-            st.setString(7, clienteDTO.telefone());
-            st.setInt(8, clienteDTO.id());
+            st.setString(1, cliente.getNome());
+            st.setString(2, cliente.getSobrenome());
+            st.setString(3, cliente.getEmail());
+            st.setString(4, cliente.getTipo());
+            st.setString(5, cliente.getIdioma());
+            st.setString(6, cliente.getPais());
+            st.setString(7, cliente.getTelefone());
+            st.setInt(8, cliente.getId());
 
             st.executeUpdate();
 

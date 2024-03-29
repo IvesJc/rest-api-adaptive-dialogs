@@ -3,7 +3,6 @@ package org.salesforce.resouce;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.salesforce.dto.ClienteDTO;
 import org.salesforce.models.Cliente;
 import org.salesforce.repositories.ClienteRepository;
 
@@ -30,7 +29,7 @@ public class ClienteResource {
     }
 
     @POST
-    public Response createCliente(ClienteDTO cliente){
+    public Response createCliente(Cliente cliente){
         if (cliente == null){
             return Response.status(400).entity("Cliente não pode ser nulo").build();
         }
@@ -42,14 +41,13 @@ public class ClienteResource {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateCliente(@PathParam("id") int id, ClienteDTO clienteDTO){
-        Cliente cliente =
+    public Response updateCliente(@PathParam("id") int id, Cliente cliente){
         cliente.setId(id);
 
-        Cliente clie = clienteRepository.getClienteById(clienteDTO.id());
+        Cliente clie = clienteRepository.getClienteById(id);
         if (clie != null){
-            clienteRepository.updateCliente(clienteDTO);
-            return Response.status(200).entity(clienteDTO).build();
+            clienteRepository.updateCliente(cliente);
+            return Response.status(200).entity(cliente).build();
         }else {
             return Response.status(400).entity("Cliente não registrado").build();
         }

@@ -3,7 +3,6 @@ package org.salesforce.resouce;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.salesforce.models.Cliente;
 import org.salesforce.models.Empresa;
 import org.salesforce.repositories.EmpresaRepository;
 
@@ -43,9 +42,7 @@ public class EmpresaResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateEmpresa(@PathParam("id") int id, Empresa empresa){
-        empresa.setId(id);
-
-        Empresa emp = empresaRepository.getEmpresaById(empresa.getId());
+        Empresa emp = empresaRepository.getEmpresaById(id);
         if (emp != null){
             empresaRepository.updateEmpresa(empresa);
             return Response.status(200).entity(empresa).build();

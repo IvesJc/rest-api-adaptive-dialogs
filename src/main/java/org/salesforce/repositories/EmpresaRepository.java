@@ -1,10 +1,6 @@
 package org.salesforce.repositories;
 
-import org.salesforce.dto.EmpresaDTO;
-import org.salesforce.models.Cliente;
 import org.salesforce.models.Empresa;
-import org.salesforce.models.Funcionario;
-import org.salesforce.models.Produto;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,6 +20,10 @@ public class EmpresaRepository {
 
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("SELECT * FROM EMPRESA");
+//             PreparedStatement st = connection.prepareStatement("SELECT CLIENTE.CLIE_ID * FROM CLIENTE " +
+//                     "INNER JOIN EMPRESA" +
+//                     " ON " +
+//                     "CLIENTE.CLIE_ID = EMPRESA.CLIENTE.FK_CLIENTE_id");
              ResultSet rs = st.executeQuery()) {
 
             while (rs.next()) {
@@ -32,10 +32,7 @@ public class EmpresaRepository {
                 empresa.setNome(rs.getString("empresa_nome"));
                 empresa.setTipoIndustria(rs.getString("empresa_tipo_industria"));
                 empresa.setTamanho(rs.getString("empresa_tamanho"));
-                empresa.setRepresentante((Cliente) rs.getObject("empresa_tipo"));
                 empresa.setPaisSede(rs.getString("empresa_pais_sede"));
-                empresa.setProdutosContratados((Produto[]) rs.getObject("empresa_produtos_contratados"));
-                empresa.setGestorSalesforce((Funcionario) rs.getObject("empresa_gestor_salesforce"));
                 lista.add(empresa);
 
             }
@@ -61,10 +58,7 @@ public class EmpresaRepository {
                 empresa.setNome(rs.getString("empresa_nome"));
                 empresa.setTipoIndustria(rs.getString("empresa_tipo_industria"));
                 empresa.setTamanho(rs.getString("empresa_tamanho"));
-                empresa.setRepresentante((Cliente) rs.getObject("empresa_tipo"));
                 empresa.setPaisSede(rs.getString("empresa_pais_sede"));
-                empresa.setProdutosContratados((Produto[]) rs.getObject("empresa_produtos_contratados"));
-                empresa.setGestorSalesforce((Funcionario) rs.getObject("empresa_gestor_salesforce"));
 
             }
         } catch (SQLException e) {
@@ -76,17 +70,17 @@ public class EmpresaRepository {
     public void createEmpresa(Empresa empresa) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO EMPRESA (" +
-                     "empresa_nome, empresa_tipo_industria, empresa_tamanho, empresa_tipo, empresa_pais_sede, empresa_produtos_contratados, empresa_gestor_salesforce)" +
+                     "empresa_nome, " +
+                     "empresa_tipo_industria, " +
+                     "empresa_tamanho, " +
+                     "empresa_pais_sede)  " +
                      " VALUES " +
-                     "(?, ?, ?, ?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?)")) {
 
             st.setString(1, empresa.getNome());
             st.setString(2, empresa.getTipoIndustria());
             st.setString(3, empresa.getTamanho());
-            st.setObject(4, empresa.getRepresentante());
-            st.setString(5, empresa.getPaisSede());
-            st.setObject(6, empresa.getProdutosContratados());
-            st.setObject(7, empresa.getGestorSalesforce());
+            st.setString(4, empresa.getPaisSede());
 
             st.executeUpdate();
 
@@ -95,21 +89,24 @@ public class EmpresaRepository {
         }
     }
 
-    public void updateEmpresa(EmpresaDTO empresaDTO) {
+    public void updateEmpresa(Empresa empresa) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE EMPRESA " +
-                             "SET empresa_nome = ?, empresa_tipo_industria = ?, empresa_tamanho = ?, empresa_tipo = ?, " +
+                             "SET " +
+                             "empresa_nome = ?, " +
+                             "empresa_tipo_industria = ?, " +
+                             "empresa_tamanho = ?, " +
                              "empresa_pais_sede = ? " +
                              "WHERE empresa_id = ?" )){
 
 
-            st.setString(1, empresaDTO.nome());
-            st.setString(2, empresaDTO.tipoIndustria());
-            st.setString(3, empresaDTO.tamanho());
-            st.setObject(4, empresaDTO.clieId());
-            st.setString(5, empresaDTO.paisSede());
-            st.setInt(8, empresaDTO.id());
+            st.setString(1, empresa.getNome());
+            st.setString(2, empresa.getTipoIndustria());
+            st.setString(3, empresa.getTamanho());
+            st.setString(4, empresa.getPaisSede());
+
+            st.setInt(5, empresa.getId());
 
             st.executeUpdate();
 
