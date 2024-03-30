@@ -8,7 +8,7 @@ import org.salesforce.repositories.RecursoRepository;
 
 import java.util.List;
 
-@Path("recursos")
+@Path("recurso")
 public class RecursoResource {
     RecursoRepository recursoRepository = new RecursoRepository();
 

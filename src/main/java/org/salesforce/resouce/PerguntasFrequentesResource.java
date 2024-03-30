@@ -10,7 +10,7 @@ import org.salesforce.repositories.PerguntasFrequentesRepository;
 
 import java.util.List;
 
-@Path("perguntas_frequentes")
+@Path("perguntas-frequentes")
 public class PerguntasFrequentesResource {
 
     PerguntasFrequentesRepository perguntasFrequentesRepository = new PerguntasFrequentesRepository();

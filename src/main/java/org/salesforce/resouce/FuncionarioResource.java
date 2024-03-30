@@ -14,7 +14,7 @@ public class FuncionarioResource {
     FuncionarioRepository funcionarioRepository = new FuncionarioRepository();
 
     @GET
-    public List<Funcionario> getClientes(){
+    public List<Funcionario> getFuncionario(){
         return funcionarioRepository.getFuncionarios();
     }
 

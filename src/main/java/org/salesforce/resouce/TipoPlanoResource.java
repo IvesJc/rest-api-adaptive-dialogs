@@ -10,7 +10,7 @@ import org.salesforce.repositories.TipoPlanoRepository;
 
 import java.util.List;
 
-@Path("tipo_plano")
+@Path("tipo-plano")
 public class TipoPlanoResource {
 
     TipoPlanoRepository tipoPlanoRepository = new TipoPlanoRepository();

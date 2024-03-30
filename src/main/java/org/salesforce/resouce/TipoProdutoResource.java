@@ -11,7 +11,7 @@ import org.salesforce.repositories.TipoProdutoRepository;
 
 import java.util.List;
 
-@Path("tipo_produto")
+@Path("tipo-produto")
 public class TipoProdutoResource {
 
     TipoProdutoRepository tipoProdutoRepository = new TipoProdutoRepository();
