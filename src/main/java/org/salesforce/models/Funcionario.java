@@ -2,20 +2,21 @@ package org.salesforce.models;
 
 public class Funcionario {
 
-	private int id;
+	private Integer id;
 	private String nome;
 	private String sobrenome;
 	private String cargo;
 	private String email;
 	private String telefone;
 	private double salario;
+	private Integer empresaId;
 	
 	
 	public Funcionario() {
 		super();
 	}
 
-	public Funcionario(int id, String nome, String sobrenome, String cargo, String email, String telefone, double salario) {
+	public Funcionario(Integer id, String nome, String sobrenome, String cargo, String email, String telefone, double salario, Integer empresaId) {
 		this.id = id;
 		this.nome = nome;
 		this.sobrenome = sobrenome;
@@ -23,13 +24,14 @@ public class Funcionario {
 		this.email = email;
 		this.telefone = telefone;
 		this.salario = salario;
+		this.empresaId = empresaId;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -68,6 +70,14 @@ public class Funcionario {
 	}
 	public void setSalario(double salario) {
 		this.salario = salario;
+	}
+
+	public Integer getEmpresaId() {
+		return empresaId;
+	}
+
+	public void setEmpresaId(Integer empresaId) {
+		this.empresaId = empresaId;
 	}
 
 	@Override

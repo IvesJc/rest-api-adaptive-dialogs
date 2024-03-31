@@ -12,8 +12,10 @@ public class TipoPlano {
 	private double preco;
 	private String tipoPreco;
 	private int nivelPlano;
-	private Recurso[] recursos;
 	private boolean testeGratisDisponivel;
+	private Integer tipoProdutoId;
+	private Integer recursosId;
+
 	
 	
 	
@@ -21,15 +23,16 @@ public class TipoPlano {
 		super();
 	}
 
-	public TipoPlano(int id, String nome, String descricao, double preco, String tipoPreco, int nivelPlano, Recurso[] recursos, boolean testeGratisDisponivel) {
+	public TipoPlano(int id, String nome, String descricao, double preco, String tipoPreco, int nivelPlano, boolean testeGratisDisponivel, Integer tipoProdutoId, Integer recursosId) {
 		this.id = id;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.preco = preco;
 		this.tipoPreco = tipoPreco;
 		this.nivelPlano = nivelPlano;
-		this.recursos = recursos;
 		this.testeGratisDisponivel = testeGratisDisponivel;
+		this.tipoProdutoId = tipoProdutoId;
+		this.recursosId = recursosId;
 	}
 
 	public int getId() {
@@ -70,17 +73,27 @@ public class TipoPlano {
 	public void setNivelPlano(int nivelPlano) {
 		this.nivelPlano = nivelPlano;
 	}
-	public Recurso[] getRecursos() {
-		return recursos;
-	}
-	public void setRecursos(Recurso[] recursos) {
-		this.recursos = recursos;
-	}
 	public boolean isTesteGratisDisponivel() {
 		return testeGratisDisponivel;
 	}
 	public void setTesteGratisDisponivel(boolean testeGratisDisponivel) {
 		this.testeGratisDisponivel = testeGratisDisponivel;
+	}
+
+	public Integer getRecursosId() {
+		return recursosId;
+	}
+
+	public void setRecursosId(Integer recursosId) {
+		this.recursosId = recursosId;
+	}
+
+	public Integer getTipoProdutoId() {
+		return tipoProdutoId;
+	}
+
+	public void setTipoProdutoId(Integer tipoProdutoId) {
+		this.tipoProdutoId = tipoProdutoId;
 	}
 
 	@Override
@@ -92,7 +105,6 @@ public class TipoPlano {
 				", preco=" + preco +
 				", tipoPreco='" + tipoPreco + '\'' +
 				", nivelPlano=" + nivelPlano +
-				", recursos=" + Arrays.toString(recursos) +
 				", testeGratisDisponivel=" + testeGratisDisponivel +
 				'}';
 	}

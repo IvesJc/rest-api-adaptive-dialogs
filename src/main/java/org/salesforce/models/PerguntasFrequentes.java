@@ -3,21 +3,20 @@ package org.salesforce.models;
 public class PerguntasFrequentes {
 
 	private int id;
-	private TipoProduto tipoProduto;
 	private String pergunta;
 	private String resposta;
-	
+	private Integer tipoProdutoId;
 
 	
 	public PerguntasFrequentes() {
 		super();
 	}
 
-	public PerguntasFrequentes(int id, TipoProduto tipoProduto, String pergunta, String resposta) {
+	public PerguntasFrequentes(int id, String pergunta, String resposta, Integer tipoProdutoId) {
 		this.id = id;
-		this.tipoProduto = tipoProduto;
 		this.pergunta = pergunta;
 		this.resposta = resposta;
+		this.tipoProdutoId = tipoProdutoId;
 	}
 
 	public int getId() {
@@ -28,12 +27,6 @@ public class PerguntasFrequentes {
 		this.id = id;
 	}
 
-	public TipoProduto getTipoProduto() {
-		return tipoProduto;
-	}
-	public void setTipoProduto(TipoProduto tipoProduto) {
-		this.tipoProduto = tipoProduto;
-	}
 	public String getPergunta() {
 		return pergunta;
 	}
@@ -47,11 +40,18 @@ public class PerguntasFrequentes {
 		this.resposta = resposta;
 	}
 
+	public Integer getTipoProdutoId() {
+		return tipoProdutoId;
+	}
+
+	public void setTipoProdutoId(Integer tipoProdutoId) {
+		this.tipoProdutoId = tipoProdutoId;
+	}
+
 	@Override
 	public String toString() {
 		return "PerguntasFrequentes{" +
 				"id=" + id +
-				", tipoProduto=" + tipoProduto +
 				", pergunta='" + pergunta + '\'' +
 				", resposta='" + resposta + '\'' +
 				'}';

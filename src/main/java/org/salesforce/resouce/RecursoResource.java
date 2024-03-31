@@ -13,8 +13,8 @@ public class RecursoResource {
     RecursoRepository recursoRepository = new RecursoRepository();
 
     @GET
-    public List<Recurso> getRecursos(){
-        return recursoRepository.getRecursos();
+    public List<Recurso> getRecurso(){
+        return recursoRepository.getRecurso();
     }
 
     @GET

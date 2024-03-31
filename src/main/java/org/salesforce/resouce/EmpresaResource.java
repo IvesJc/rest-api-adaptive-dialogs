@@ -33,7 +33,10 @@ public class EmpresaResource {
         if (empresa == null){
             return Response.status(400).entity("Empresa não pode ser nula").build();
         }
-        empresaRepository.createEmpresa(empresa);
+        int result = empresaRepository.createEmpresa(empresa);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Empresa").build();
+        }
         return Response.status(201).entity(empresa).build();
     }
 

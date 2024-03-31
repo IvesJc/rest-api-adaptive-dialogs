@@ -3,6 +3,7 @@ package org.salesforce.repositories;
 import org.salesforce.models.Cliente;
 import org.salesforce.models.Empresa;
 import org.salesforce.models.Recurso;
+import org.salesforce.models.TipoPlano;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -16,20 +17,20 @@ public class RecursoRepository {
     public RecursoRepository() {
     }
 
-    public List<Recurso> getRecursos() {
+    public List<Recurso> getRecurso() {
         List<Recurso> lista = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
-             PreparedStatement st = connection.prepareStatement("SELECT * FROM RECURSOS");
+             PreparedStatement st = connection.prepareStatement("SELECT * FROM RECURSO");
              ResultSet rs = st.executeQuery()) {
 
             while (rs.next()) {
                 Recurso recurso = new Recurso();
-                recurso.setId(rs.getInt("recursos_id"));
-                recurso.setNome(rs.getString("recursos_nome"));
-                recurso.setNotasPreco(rs.getString("recursos_notas"));
-                recurso.setDescricao(rs.getString("recursos_desc"));
-                recurso.setCategoria(rs.getString("recursos_categ"));
+                recurso.setId(rs.getInt("recurso_id"));
+                recurso.setNome(rs.getString("recurso_nome"));
+                recurso.setNotasPreco(rs.getString("recurso_notas"));
+                recurso.setDescricao(rs.getString("recurso_desc"));
+                recurso.setCategoria(rs.getString("recurso_categ"));
                 lista.add(recurso);
 
             }
@@ -43,18 +44,18 @@ public class RecursoRepository {
         Recurso recurso = null;
 
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
-             PreparedStatement st = connection.prepareStatement("SELECT * FROM RECURSO WHERE recursos_id = ?")) {
+             PreparedStatement st = connection.prepareStatement("SELECT * FROM RECURSO WHERE recurso_id = ?")) {
 
             st.setInt(1, id);
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
                 recurso = new Recurso();
-                recurso.setId(rs.getInt("recursos_id"));
-                recurso.setNome(rs.getString("recursos_nome"));
-                recurso.setNotasPreco(rs.getString("recursos_notas"));
-                recurso.setDescricao(rs.getString("recursos_desc"));
-                recurso.setCategoria(rs.getString("recursos_categ"));
+                recurso.setId(rs.getInt("recurso_id"));
+                recurso.setNome(rs.getString("recurso_nome"));
+                recurso.setNotasPreco(rs.getString("recurso_notas"));
+                recurso.setDescricao(rs.getString("recurso_desc"));
+                recurso.setCategoria(rs.getString("recurso_categ"));
 
             }
         } catch (SQLException e) {
@@ -65,20 +66,44 @@ public class RecursoRepository {
 
     public void createRecurso(Recurso recurso) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
-             PreparedStatement st = connection.prepareStatement("INSERT INTO RECURSOS (" +
-                     "recursos_nome, recursos_notas, recursos_desc, recursos_categ)" +
+             PreparedStatement st = connection.prepareStatement("INSERT INTO RECURSO (" +
+                     "recurso_nome, recurso_notas, recurso_desc, recurso_categ)" +
                      " VALUES " +
                      "(?, ?, ?, ?)")) {
 
-            st.setObject(1, recurso.getNome());
+            st.setString(1, recurso.getNome());
             st.setString(2, recurso.getNotasPreco());
             st.setString(3, recurso.getDescricao());
             st.setString(4, recurso.getCategoria());
 
-            st.executeUpdate();
+            int result = st.executeUpdate();
+            ResultSet resultSet = st.getGeneratedKeys();
+            if (resultSet.next()) {
+                recurso.setId(resultSet.getInt(1));
+                if (recurso.getTipoPlanoId() != null) {
+                    createRecursoTipoPlanoConnection(recurso);
+                }
+            }
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void createRecursoTipoPlanoConnection(Recurso recurso){
+        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+             PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PLANO_RECURSO_POSSUI (" +
+                     "FK_RECURSO_recurso_id, FK_TIPO_PLANO_tipo_plano_id )" +
+                     " VALUES " +
+                     "(?, ?)")) {
+
+            st.setInt(1, recurso.getId());
+            st.setInt(2, recurso.getTipoPlanoId());
+
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -86,8 +111,8 @@ public class RecursoRepository {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE RECURSO " +
-                             "SET recursos_nome = ?, recursos_notas = ?, recursos_desc = ?, recursos_categ = ?" +
-                             "WHERE recursos_id = ?" )){
+                             "SET recurso_nome = ?, recurso_notas = ?, recurso_desc = ?, recurso_categ = ?" +
+                             "WHERE recurso_id = ?" )){
 
             st.setString(1, recurso.getNome());
             st.setString(2, recurso.getNotasPreco());
@@ -106,7 +131,7 @@ public class RecursoRepository {
 
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
-                     "DELETE FROM RECURSOS WHERE recursos_id = ?" )){
+                     "DELETE FROM RECURSO WHERE recurso_id = ?" )){
 
             st.setInt(1, id);
 

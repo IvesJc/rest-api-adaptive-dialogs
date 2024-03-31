@@ -32,7 +32,6 @@ public class TipoPlanoRepository {
                 tipoPlano.setPreco(rs.getDouble("tipo_plano_preco"));
                 tipoPlano.setTipoPreco(rs.getString("tipo_plano_tipo_preco"));
                 tipoPlano.setNivelPlano(rs.getInt("tipo_plano_nivel_plano"));
-                tipoPlano.setRecursos((Recurso[]) rs.getObject("tipo_plano_recursos"));
                 tipoPlano.setTesteGratisDisponivel(rs.getBoolean("TIPO_PLANO_TESTE_GRATIS_DISPONIVEL"));
                 lista.add(tipoPlano);
 
@@ -61,7 +60,6 @@ public class TipoPlanoRepository {
                 tipoPlano.setPreco(rs.getDouble("tipo_plano_preco"));
                 tipoPlano.setTipoPreco(rs.getString("tipo_plano_tipo_preco"));
                 tipoPlano.setNivelPlano(rs.getInt("tipo_plano_nivel_plano"));
-                tipoPlano.setRecursos((Recurso[]) rs.getObject("tipo_plano_recursos"));
                 tipoPlano.setTesteGratisDisponivel(rs.getBoolean("TIPO_PLANO_TESTE_GRATIS_DISPONIVEL"));
 
             }
@@ -74,30 +72,73 @@ public class TipoPlanoRepository {
     public void createTipoPlano(TipoPlano tipoPlano) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PLANO (" +
-                     "tipo_plano_nome, tipo_plano_desc, tipo_plano_preco, tipo_plano_tipo_preco, tipo_plano_nivel_plano, tipo_plano_recursos, TIPO_PLANO_TESTE_GRATIS_DISPONIVEL)" +
+                     "tipo_plano_nome, tipo_plano_desc, tipo_plano_preco, tipo_plano_tipo_preco, tipo_plano_nivel_plano, TIPO_PLANO_TESTE_GRATIS_DISPONIVEL)" +
                      " VALUES " +
-                     "(?, ?, ?, ?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?, ?, ?)")) {
 
             st.setString(1, tipoPlano.getNome());
             st.setString(2, tipoPlano.getDescricao());
             st.setDouble(3, tipoPlano.getPreco());
             st.setString(4, tipoPlano.getTipoPreco());
             st.setInt(5, tipoPlano.getNivelPlano());
-            st.setObject(6, tipoPlano.getRecursos());
-            st.setBoolean(7, tipoPlano.isTesteGratisDisponivel());
+            st.setBoolean(6, tipoPlano.isTesteGratisDisponivel());
+
+            int result = st.executeUpdate();
+            ResultSet resultSet = st.getGeneratedKeys();
+            if (resultSet.next()) {
+                tipoPlano.setId(resultSet.getInt(1));
+                if (tipoPlano.getTipoProdutoId() != null) {
+                    createTipoPlanoTipoProdConnection(tipoPlano);
+                }
+                if (tipoPlano.getRecursosId() != null){
+                    createTipoPlanoRecursoConnection(tipoPlano);
+                }
+            }
+            return result;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    private void createTipoPlanoTipoProdConnection(TipoPlano tipoPlano){
+        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+             PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PROD_TIPO_PLANO_TEM (" +
+                     "FK_TIPO_PLANO_tipo_plano_id, FK_TIPO_PRODUTO_tipo_prod_id )" +
+                     " VALUES " +
+                     "(?, ?)")) {
+
+            st.setInt(1, tipoPlano.getId());
+            st.setInt(2, tipoPlano.getTipoProdutoId());
 
             st.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
+    private void createTipoPlanoRecursoConnection(TipoPlano tipoPlano){
+        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+             PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PLANO_RECURSOS_POSSUI (" +
+                     "FK_RECURSOS_recursos_id, FK_TIPO_PLANO_tipo_plano_id )" +
+                     " VALUES " +
+                     "(?, ?)")) {
+
+            st.setInt(1, tipoPlano.getRecursosId());
+            st.setInt(2, tipoPlano.getId());
+
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public void updateTipoPlano(TipoPlano tipoPlano) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE TIPO_PLANO " +
-                             "SET tipo_plano_nome = ?, tipo_plano_desc = ?, tipo_plano_preco = ?, tipo_plano_tipo_preco = ?, tipo_plano_nivel_plano = ?, tipo_plano_recursos = ?, TIPO_PLANO_TESTE_GRATIS_DISPONIVEL = ? " +
+                             "SET tipo_plano_nome = ?, tipo_plano_desc = ?, tipo_plano_preco = ?, tipo_plano_tipo_preco = ?, tipo_plano_nivel_plano = ?, TIPO_PLANO_TESTE_GRATIS_DISPONIVEL = ? " +
                              "WHERE tipo_plano_id = ?" )){
 
             st.setString(1, tipoPlano.getNome());
@@ -105,9 +146,8 @@ public class TipoPlanoRepository {
             st.setDouble(3, tipoPlano.getPreco());
             st.setString(4, tipoPlano.getTipoPreco());
             st.setInt(5, tipoPlano.getNivelPlano());
-            st.setObject(6, tipoPlano.getRecursos());
-            st.setBoolean(7, tipoPlano.isTesteGratisDisponivel());
-            st.setInt(8, tipoPlano.getId());
+            st.setBoolean(6, tipoPlano.isTesteGratisDisponivel());
+            st.setInt(7, tipoPlano.getId());
 
             st.executeUpdate();
 

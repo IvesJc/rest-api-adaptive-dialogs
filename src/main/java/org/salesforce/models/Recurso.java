@@ -7,17 +7,19 @@ public class Recurso {
 	private String notasPreco;
 	private String descricao;
 	private String categoria;
+	private Integer tipoPlanoId;
 	
 	public Recurso() {
 		super();
 	}
 
-	public Recurso(int id, String nome, String notasPreco, String descricao, String categoria) {
+	public Recurso(int id, String nome, String notasPreco, String descricao, String categoria, Integer tipoPlanoId) {
 		this.id = id;
 		this.nome = nome;
 		this.notasPreco = notasPreco;
 		this.descricao = descricao;
 		this.categoria = categoria;
+		this.tipoPlanoId = tipoPlanoId;
 	}
 
 	public int getId() {
@@ -51,6 +53,14 @@ public class Recurso {
 	}
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
+	}
+
+	public Integer getTipoPlanoId() {
+		return tipoPlanoId;
+	}
+
+	public void setTipoPlanoId(Integer tipoPlanoId) {
+		this.tipoPlanoId = tipoPlanoId;
 	}
 
 	@Override

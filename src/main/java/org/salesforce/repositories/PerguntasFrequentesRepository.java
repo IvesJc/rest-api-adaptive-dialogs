@@ -27,7 +27,6 @@ public class PerguntasFrequentesRepository {
             while (rs.next()) {
                 PerguntasFrequentes perguntasFrequentes = new PerguntasFrequentes();
                 perguntasFrequentes.setId(rs.getInt("perg_id"));
-                perguntasFrequentes.setTipoProduto((TipoProduto) rs.getObject("perg_tipo_prod"));
                 perguntasFrequentes.setPergunta(rs.getString("perg_perguntas"));
                 perguntasFrequentes.setResposta(rs.getString("perg_respostas"));
 
@@ -53,7 +52,6 @@ public class PerguntasFrequentesRepository {
             if (rs.next()) {
                 perguntasFrequentes = new PerguntasFrequentes();
                 perguntasFrequentes.setId(rs.getInt("perg_id"));
-                perguntasFrequentes.setTipoProduto((TipoProduto) rs.getObject("perg_tipo_prod"));
                 perguntasFrequentes.setPergunta(rs.getString("perg_perguntas"));
                 perguntasFrequentes.setResposta(rs.getString("perg_respostas"));
 
@@ -67,13 +65,13 @@ public class PerguntasFrequentesRepository {
     public void createPergFreq(PerguntasFrequentes perguntasFrequentes) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO PERGUNTAS_FREQUENTES (" +
-                     "perg_tipo_prod, perg_perguntas, perg_respostas)" +
+                     "perg_perguntas, perg_respostas, FK_TIPO_PRODUTO_tipo_prod_id)" +
                      " VALUES " +
                      "(?, ?, ?)")) {
 
-            st.setObject(1, perguntasFrequentes.getTipoProduto());
-            st.setString(2, perguntasFrequentes.getPergunta());
+            st.setString(1, perguntasFrequentes.getPergunta());
             st.setString(2, perguntasFrequentes.getResposta());
+            st.setInt(3, perguntasFrequentes.getTipoProdutoId());
 
             st.executeUpdate();
 
@@ -86,13 +84,12 @@ public class PerguntasFrequentesRepository {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE PERGUNTAS_FREQUENTES " +
-                             "SET perg_tipo_prod = ?, perg_perguntas = ?, perg_respostas = ? " +
+                             "SET perg_perguntas = ?, perg_respostas = ? " +
                              "WHERE perg_id = ?" )){
 
-            st.setObject(1, perguntasFrequentes.getTipoProduto());
-            st.setString(2, perguntasFrequentes.getPergunta());
-            st.setString(3, perguntasFrequentes.getResposta());
-            st.setInt(4, perguntasFrequentes.getId());
+            st.setString(1, perguntasFrequentes.getPergunta());
+            st.setString(2, perguntasFrequentes.getResposta());
+            st.setInt(3, perguntasFrequentes.getId());
 
             st.executeUpdate();
 

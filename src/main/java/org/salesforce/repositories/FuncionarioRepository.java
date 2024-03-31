@@ -74,7 +74,7 @@ public class FuncionarioRepository {
              PreparedStatement st = connection.prepareStatement("INSERT INTO FUNCIONARIO (" +
                      "func_nome, func_sobrenome, func_cargo, func_email, func_telefone, func_salario)" +
                      " VALUES " +
-                     "(?, ?, ?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?, ?, ?)", new String[]{"func_id"})) {
 
             st.setString(1, funcionario.getNome());
             st.setString(2, funcionario.getSobrenome());
@@ -84,9 +84,33 @@ public class FuncionarioRepository {
             st.setDouble(6, funcionario.getSalario());
 
             st.executeUpdate();
+            ResultSet resultSet = st.getGeneratedKeys();
+            if (resultSet.next()){
+                funcionario.setId(resultSet.getInt(1));
+                if (funcionario.getEmpresaId() != null){
+                    createFuncionarioEmpresaConnection(funcionario);
+                }
+            }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void createFuncionarioEmpresaConnection(Funcionario funcionario) {
+        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+             PreparedStatement st = connection.prepareStatement("INSERT INTO EMP_FUNC_ATENDE (" +
+                     "FK_FUNCIONARIO_atende_emp, FK_EMPRESA_atende_func )" +
+                     " VALUES " +
+                     "(?, ?)")) {
+
+            st.setInt(1, funcionario.getId());
+            st.setInt(2, funcionario.getEmpresaId());
+
+            st.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -96,7 +120,7 @@ public class FuncionarioRepository {
                      "UPDATE FUNCIONARIO " +
                              "SET func_nome = ?, func_sobrenome = ?, func_cargo = ?, func_email = ?, func_telefone = ?, " +
                              "func_salario = ? " +
-                             "WHERE func_id = ?" )){
+                             "WHERE func_id = ?")) {
 
             st.setString(1, funcionario.getNome());
             st.setString(2, funcionario.getSobrenome());
@@ -113,17 +137,17 @@ public class FuncionarioRepository {
         }
     }
 
-    public void deleteById(int id){
+    public void deleteById(int id) {
 
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
-                     "DELETE FROM FUNCIONARIO WHERE func_id = ?" )){
+                     "DELETE FROM FUNCIONARIO WHERE func_id = ?")) {
 
             st.setInt(1, id);
 
             st.executeUpdate();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }

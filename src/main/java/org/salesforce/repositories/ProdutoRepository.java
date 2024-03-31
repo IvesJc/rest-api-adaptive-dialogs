@@ -25,11 +25,8 @@ public class ProdutoRepository {
             while (rs.next()) {
                 Produto produto = new Produto();
                 produto.setId(rs.getInt("prod_id"));
-                produto.setEmpresa((Empresa) rs.getObject("prod_empresa"));
                 produto.setPreco(rs.getDouble("prod_preco"));
                 produto.setStatus(rs.getString("prod_status"));
-                produto.setPlanoContratado((TipoPlano) rs.getObject("prod_plano_contratado"));
-                produto.setTipoProduto((TipoProduto) rs.getObject("prod_tipo_produto"));
                 produto.setTesteGratisAte(rs.getDate("prod_teste_gratis_ate"));
                 lista.add(produto);
 
@@ -52,11 +49,8 @@ public class ProdutoRepository {
             if (rs.next()) {
                 produto = new Produto();
                 produto.setId(rs.getInt("prod_id"));
-                produto.setEmpresa((Empresa) rs.getObject("prod_empresa"));
                 produto.setPreco(rs.getDouble("prod_preco"));
                 produto.setStatus(rs.getString("prod_status"));
-                produto.setPlanoContratado((TipoPlano) rs.getObject("prod_plano_contratado"));
-                produto.setTipoProduto((TipoProduto) rs.getObject("prod_tipo_produto"));
                 produto.setTesteGratisAte(rs.getDate("prod_teste_gratis_ate"));
             }
         } catch (SQLException e) {
@@ -68,22 +62,42 @@ public class ProdutoRepository {
     public void createProduto(Produto produto) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO PRODUTO (" +
-                     "prod_empresa, prod_preco, prod_status, prod_plano_contratado, prod_tipo_produto, " +
-                     "prod_teste_gratis_ate) " +
+                     "prod_preco, prod_status," +
+                     "prod_teste_gratis_ate, FK_TIPO_PRODUTO_tipo_prod_id) " +
                      " VALUES " +
-                     "(?, ?, ?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?)")) {
 
-            st.setObject(1, produto.getEmpresa());
-            st.setDouble(2, produto.getPreco());
-            st.setString(3, produto.getStatus());
-            st.setObject(4, produto.getPlanoContratado());
-            st.setObject(5, produto.getTipoProduto());
-            st.setDate(6, produto.getTesteGratisAte());
+            st.setDouble(1, produto.getPreco());
+            st.setString(2, produto.getStatus());
+            st.setDate(3, produto.getTesteGratisAte());
+            st.setInt(4, produto.getTipoProdutoId());
+
+            int result = st.executeUpdate();
+            ResultSet resultSet = st.getGeneratedKeys();
+            if (resultSet.next()) {
+                produto.setId(resultSet.getInt(1));
+                if (produto.getEmpresaId() != null) {
+                    createProdutoEmpresaConnection(produto);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    private void createProdutoEmpresaConnection(Produto produto){
+        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+             PreparedStatement st = connection.prepareStatement("INSERT INTO EMP_PROD_CONTRATA (" +
+                     "FK_EMPRESA_atende_func, FK_PRODUTO_prod_id )" +
+                     " VALUES " +
+                     "(?, ?)")) {
+
+            st.setInt(1, produto.getEmpresaId());
+            st.setInt(2, produto.getId());
 
             st.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -91,17 +105,14 @@ public class ProdutoRepository {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE PRODUTO " +
-                             "SET prod_empresa = ?, prod_preco = ?, prod_status = ?, prod_plano_contratado = ?, " +
-                             "prod_tipo_produto = ?, prod_teste_gratis_ate = ? " +
+                             "SET prod_preco = ?, prod_status = ?,  " +
+                             "prod_teste_gratis_ate = ? " +
                              "WHERE prod_id = ?" )){
 
-            st.setObject(1, produto.getEmpresa());
-            st.setDouble(2, produto.getPreco());
-            st.setString(3, produto.getStatus());
-            st.setObject(4, produto.getPlanoContratado());
-            st.setObject(5, produto.getTipoProduto());
-            st.setDate(6, produto.getTesteGratisAte());
-            st.setInt(7, produto.getId());
+            st.setDouble(1, produto.getPreco());
+            st.setString(2, produto.getStatus());
+            st.setDate(3, produto.getTesteGratisAte());
+            st.setInt(4, produto.getId());
 
             st.executeUpdate();
 

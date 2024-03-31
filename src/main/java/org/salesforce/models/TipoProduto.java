@@ -8,22 +8,22 @@ public class TipoProduto {
 	private int id;
 	private String nome;
 	private String descricao;
-	private TipoPlano[] planosDisponiveis;
 	private boolean isAddOn;
 	private String nomeGrupo;
+	private Integer tipoPlanoId;
 	
 	
 	public TipoProduto() {
 		super();
 	}
 
-	public TipoProduto(int id, String nome, String descricao, TipoPlano[] planosDisponiveis, boolean isAddOn, String nomeGrupo) {
+	public TipoProduto(int id, String nome, String descricao, boolean isAddOn, String nomeGrupo, Integer tipoPlanoId) {
 		this.id = id;
 		this.nome = nome;
 		this.descricao = descricao;
-		this.planosDisponiveis = planosDisponiveis;
 		this.isAddOn = isAddOn;
 		this.nomeGrupo = nomeGrupo;
+		this.tipoPlanoId = tipoPlanoId;
 	}
 
 	public int getId() {
@@ -48,13 +48,6 @@ public class TipoProduto {
 		this.descricao = descricao;
 	}
 	
-	public TipoPlano[] getPlanosDisponiveis() {
-		return planosDisponiveis;
-	}
-	public void setPlanosDisponiveis(TipoPlano[] planosDisponiveis) {
-		this.planosDisponiveis = planosDisponiveis;
-	}
-	
 	public boolean isAddOn() {
 		return isAddOn;
 	}
@@ -69,13 +62,20 @@ public class TipoProduto {
 		this.nomeGrupo = nomeGrupo;
 	}
 
+	public Integer getTipoPlanoId() {
+		return tipoPlanoId;
+	}
+
+	public void setTipoPlanoId(Integer tipoPlanoId) {
+		this.tipoPlanoId = tipoPlanoId;
+	}
+
 	@Override
 	public String toString() {
 		return "TipoProduto{" +
 				"id=" + id +
 				", nome='" + nome + '\'' +
 				", descricao='" + descricao + '\'' +
-				", planosDisponiveis=" + Arrays.toString(planosDisponiveis) +
 				", isAddOn=" + isAddOn +
 				", nomeGrupo='" + nomeGrupo + '\'' +
 				'}';

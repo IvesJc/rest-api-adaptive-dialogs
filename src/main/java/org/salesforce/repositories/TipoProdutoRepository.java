@@ -1,5 +1,6 @@
 package org.salesforce.repositories;
 
+import org.salesforce.models.Empresa;
 import org.salesforce.models.TipoPlano;
 import org.salesforce.models.TipoProduto;
 
@@ -27,7 +28,6 @@ public class TipoProdutoRepository {
                 tipoProduto.setId(rs.getInt("tipo_prod_id"));
                 tipoProduto.setNome(rs.getString("tipo_prod_nome"));
                 tipoProduto.setDescricao(rs.getString("tipo_prod_desc"));
-                tipoProduto.setPlanosDisponiveis((TipoPlano[]) rs.getObject("tipo_prod_planos_disp"));
                 tipoProduto.setAddOn(rs.getBoolean("tipo_prod_prod_add_on"));
                 tipoProduto.setNomeGrupo(rs.getString("tipo_prod_nome_grupo"));
                 lista.add(tipoProduto);
@@ -54,7 +54,6 @@ public class TipoProdutoRepository {
                 tipoProduto.setId(rs.getInt("tipo_prod_id"));
                 tipoProduto.setNome(rs.getString("tipo_prod_nome"));
                 tipoProduto.setDescricao(rs.getString("tipo_prod_desc"));
-                tipoProduto.setPlanosDisponiveis((TipoPlano[]) rs.getObject("tipo_prod_planos_disp"));
                 tipoProduto.setAddOn(rs.getBoolean("tipo_prod_prod_add_on"));
                 tipoProduto.setNomeGrupo(rs.getString("tipo_prod_nome_grupo"));
 
@@ -68,20 +67,43 @@ public class TipoProdutoRepository {
     public void createTipoProduto(TipoProduto tipoProduto) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PRODUTO (" +
-                     "tipo_prod_nome, tipo_prod_desc, tipo_prod_planos_disp, tipo_prod_prod_add_on, tipo_prod_nome_grupo)" +
+                     "tipo_prod_nome, tipo_prod_desc, tipo_prod_prod_add_on, tipo_prod_nome_grupo)" +
                      " VALUES " +
-                     "(?, ?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?)")) {
 
             st.setString(1, tipoProduto.getNome());
             st.setString(2, tipoProduto.getDescricao());
-            st.setObject(3, tipoProduto.getPlanosDisponiveis());
-            st.setBoolean(4, tipoProduto.isAddOn());
-            st.setString(5, tipoProduto.getNomeGrupo());
+            st.setBoolean(3, tipoProduto.isAddOn());
+            st.setString(4, tipoProduto.getNomeGrupo());
+
+            int result = st.executeUpdate();
+            ResultSet resultSet = st.getGeneratedKeys();
+            if (resultSet.next()) {
+                tipoProduto.setId(resultSet.getInt(1));
+                if (tipoProduto.getTipoPlanoId() != null) {
+                    createTipoProdTipoPlanoConnection(tipoProduto);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void createTipoProdTipoPlanoConnection(TipoProduto tipoProduto){
+        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+             PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PROD_TIPO_PLANO_TEM (" +
+                     "FK_TIPO_PLANO_tipo_plano_id, FK_TIPO_PRODUTO_tipo_prod_id )" +
+                     " VALUES " +
+                     "(?, ?)")) {
+
+            st.setInt(1, tipoProduto.getTipoPlanoId());
+            st.setInt(2, tipoProduto.getId());
 
             st.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -89,15 +111,15 @@ public class TipoProdutoRepository {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE TIPO_PRODUTO " +
-                             "SET tipo_prod_nome = ?, tipo_prod_desc = ?, tipo_prod_planos_disp = ?, tipo_prod_prod_add_on = ?, tipo_prod_nome_grupo = ? " +
+                             "SET tipo_prod_nome = ?, tipo_prod_desc = ?,  tipo_prod_prod_add_on = ?, " +
+                             "tipo_prod_nome_grupo = ? " +
                              "WHERE tipo_prod_id = ?" )){
 
             st.setString(1, tipoProduto.getNome());
             st.setString(2, tipoProduto.getDescricao());
-            st.setObject(3, tipoProduto.getPlanosDisponiveis());
-            st.setBoolean(4, tipoProduto.isAddOn());
-            st.setString(5, tipoProduto.getNomeGrupo());
-            st.setInt(6, tipoProduto.getId());
+            st.setBoolean(3, tipoProduto.isAddOn());
+            st.setString(4, tipoProduto.getNomeGrupo());
+            st.setInt(5, tipoProduto.getId());
 
             st.executeUpdate();
 
