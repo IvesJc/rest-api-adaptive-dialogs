@@ -31,9 +31,12 @@ public class ClienteResource {
     @POST
     public Response createCliente(Cliente cliente){
         if (cliente == null){
-            return Response.status(400).entity("Cliente não pode ser nulo").build();
+            return Response.status(400).entity("Cliente não pode ser nula").build();
         }
-        clienteRepository.createCliente(cliente);
+        int result = clienteRepository.createCliente(cliente);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Cliente").build();
+        }
         return Response.status(201).entity(cliente).build();
     }
 

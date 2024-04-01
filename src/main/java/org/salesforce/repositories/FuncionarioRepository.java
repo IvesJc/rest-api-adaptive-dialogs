@@ -69,7 +69,7 @@ public class FuncionarioRepository {
         return funcionario;
     }
 
-    public void createFuncionario(Funcionario funcionario) {
+    public int createFuncionario(Funcionario funcionario) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO FUNCIONARIO (" +
                      "func_nome, func_sobrenome, func_cargo, func_email, func_telefone, func_salario)" +
@@ -83,7 +83,7 @@ public class FuncionarioRepository {
             st.setString(5, funcionario.getTelefone());
             st.setDouble(6, funcionario.getSalario());
 
-            st.executeUpdate();
+            int result = st.executeUpdate();
             ResultSet resultSet = st.getGeneratedKeys();
             if (resultSet.next()){
                 funcionario.setId(resultSet.getInt(1));
@@ -91,10 +91,12 @@ public class FuncionarioRepository {
                     createFuncionarioEmpresaConnection(funcionario);
                 }
             }
+            return result;
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
     private void createFuncionarioEmpresaConnection(Funcionario funcionario) {

@@ -62,22 +62,23 @@ public class PerguntasFrequentesRepository {
         return perguntasFrequentes;
     }
 
-    public void createPergFreq(PerguntasFrequentes perguntasFrequentes) {
+    public int createPergFreq(PerguntasFrequentes perguntasFrequentes) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO PERGUNTAS_FREQUENTES (" +
                      "perg_perguntas, perg_respostas, FK_TIPO_PRODUTO_tipo_prod_id)" +
                      " VALUES " +
-                     "(?, ?, ?)")) {
+                     "(?, ?, ?)", new String[]{"empresa_id"})) {
 
             st.setString(1, perguntasFrequentes.getPergunta());
             st.setString(2, perguntasFrequentes.getResposta());
             st.setInt(3, perguntasFrequentes.getTipoProdutoId());
 
-            st.executeUpdate();
+            return st.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return 0;
     }
 
     public void updatePergFreq(PerguntasFrequentes perguntasFrequentes) {

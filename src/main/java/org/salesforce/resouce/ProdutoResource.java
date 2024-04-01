@@ -33,9 +33,12 @@ public class ProdutoResource {
     @POST
     public Response createProduto(Produto produto){
         if (produto == null){
-            return Response.status(400).entity("Produto não pode ser nulo").build();
+            return Response.status(400).entity("Produto não pode ser nula").build();
         }
-        produtoRepository.createProduto(produto);
+        int result = produtoRepository.createProduto(produto);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Produto").build();
+        }
         return Response.status(201).entity(produto).build();
     }
 

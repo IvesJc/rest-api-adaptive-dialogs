@@ -31,9 +31,12 @@ public class FuncionarioResource {
     @POST
     public Response createFuncionario(Funcionario funcionario){
         if (funcionario == null){
-            return Response.status(400).entity("Funcionário não pode ser nulo").build();
+            return Response.status(400).entity("Funcionário não pode ser nula").build();
         }
-        funcionarioRepository.createFuncionario(funcionario);
+        int result = funcionarioRepository.createFuncionario(funcionario);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Funcionário").build();
+        }
         return Response.status(201).entity(funcionario).build();
     }
 

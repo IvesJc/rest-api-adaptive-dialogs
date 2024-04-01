@@ -64,12 +64,12 @@ public class RecursoRepository {
         return recurso;
     }
 
-    public void createRecurso(Recurso recurso) {
+    public int createRecurso(Recurso recurso) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO RECURSO (" +
                      "recurso_nome, recurso_notas, recurso_desc, recurso_categ)" +
                      " VALUES " +
-                     "(?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?)", new String[]{"empresa_id"})) {
 
             st.setString(1, recurso.getNome());
             st.setString(2, recurso.getNotasPreco());
@@ -84,10 +84,12 @@ public class RecursoRepository {
                     createRecursoTipoPlanoConnection(recurso);
                 }
             }
+            return result;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return 0;
     }
 
     private void createRecursoTipoPlanoConnection(Recurso recurso){

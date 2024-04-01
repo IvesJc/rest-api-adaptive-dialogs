@@ -69,12 +69,12 @@ public class TipoPlanoRepository {
         return tipoPlano;
     }
 
-    public void createTipoPlano(TipoPlano tipoPlano) {
+    public int createTipoPlano(TipoPlano tipoPlano) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PLANO (" +
                      "tipo_plano_nome, tipo_plano_desc, tipo_plano_preco, tipo_plano_tipo_preco, tipo_plano_nivel_plano, TIPO_PLANO_TESTE_GRATIS_DISPONIVEL)" +
                      " VALUES " +
-                     "(?, ?, ?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?, ?, ?)", new String[]{"empresa_id"})) {
 
             st.setString(1, tipoPlano.getNome());
             st.setString(2, tipoPlano.getDescricao());

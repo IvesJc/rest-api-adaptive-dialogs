@@ -59,13 +59,13 @@ public class ProdutoRepository {
         return produto;
     }
 
-    public void createProduto(Produto produto) {
+    public int createProduto(Produto produto) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO PRODUTO (" +
                      "prod_preco, prod_status," +
                      "prod_teste_gratis_ate, FK_TIPO_PRODUTO_tipo_prod_id) " +
                      " VALUES " +
-                     "(?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?)", new String[]{"empresa_id"})) {
 
             st.setDouble(1, produto.getPreco());
             st.setString(2, produto.getStatus());
@@ -80,9 +80,11 @@ public class ProdutoRepository {
                     createProdutoEmpresaConnection(produto);
                 }
             }
+            return result;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return 0;
     }
     private void createProdutoEmpresaConnection(Produto produto){
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);

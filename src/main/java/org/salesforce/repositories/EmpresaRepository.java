@@ -103,7 +103,7 @@ public class EmpresaRepository {
     private void createEmpresaFuncionarioConnection(Empresa empresa){
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO EMP_FUNC_ATENDE (" +
-                     "FK_FUNCIONARIO_atende_emp, FK_EMPRESA_atende_func )" +
+                     "FK_FUNCIONARIO_atende_emp, FK_EMPRESA_atende_func)" +
                      " VALUES " +
                      "(?, ?)")) {
 

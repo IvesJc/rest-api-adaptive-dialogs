@@ -64,12 +64,12 @@ public class TipoProdutoRepository {
         return tipoProduto;
     }
 
-    public void createTipoProduto(TipoProduto tipoProduto) {
+    public int createTipoProduto(TipoProduto tipoProduto) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PRODUTO (" +
                      "tipo_prod_nome, tipo_prod_desc, tipo_prod_prod_add_on, tipo_prod_nome_grupo)" +
                      " VALUES " +
-                     "(?, ?, ?, ?)")) {
+                     "(?, ?, ?, ?)", new String[]{"empresa_id"})) {
 
             st.setString(1, tipoProduto.getNome());
             st.setString(2, tipoProduto.getDescricao());
@@ -84,10 +84,12 @@ public class TipoProdutoRepository {
                     createTipoProdTipoPlanoConnection(tipoProduto);
                 }
             }
+            return result;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return 0;
     }
 
     private void createTipoProdTipoPlanoConnection(TipoProduto tipoProduto){

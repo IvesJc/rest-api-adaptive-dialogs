@@ -32,10 +32,13 @@ public class PerguntasFrequentesResource {
 
     @POST
     public Response createPergFreq(PerguntasFrequentes perguntasFrequentes) {
-        if (perguntasFrequentes == null) {
-            return Response.status(400).entity("Pergunta Frequente não pode ser nulo").build();
+        if (perguntasFrequentes == null){
+            return Response.status(400).entity("Perguntas Frequentes não pode ser nula").build();
         }
-        perguntasFrequentesRepository.createPergFreq(perguntasFrequentes);
+        int result = perguntasFrequentesRepository.createPergFreq(perguntasFrequentes);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Perguntas Frequentes").build();
+        }
         return Response.status(201).entity(perguntasFrequentes).build();
     }
 

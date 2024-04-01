@@ -30,9 +30,12 @@ public class RecursoResource {
     @POST
     public Response createRecurso(Recurso recurso){
         if (recurso == null){
-            return Response.status(400).entity("Recurso não pode ser nulo").build();
+            return Response.status(400).entity("Recurso não pode ser nula").build();
         }
-        recursoRepository.createRecurso(recurso);
+        int result = recursoRepository.createRecurso(recurso);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Recurso").build();
+        }
         return Response.status(201).entity(recurso).build();
     }
 

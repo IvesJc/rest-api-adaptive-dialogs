@@ -33,9 +33,12 @@ public class TipoPlanoResource {
     @POST
     public Response createTipoPlano(TipoPlano tipoPlano){
         if (tipoPlano == null){
-            return Response.status(400).entity("Tipo Plano não pode ser nulo").build();
+            return Response.status(400).entity("Tipo Plano não pode ser nula").build();
         }
-        tipoPlanoRepository.createTipoPlano(tipoPlano);
+        int result = tipoPlanoRepository.createTipoPlano(tipoPlano);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Tipo Plano").build();
+        }
         return Response.status(201).entity(tipoPlano).build();
     }
 

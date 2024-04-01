@@ -34,9 +34,12 @@ public class TipoProdutoResource {
     @POST
     public Response createTipoProduto(TipoProduto tipoProduto){
         if (tipoProduto == null){
-            return Response.status(400).entity("Tipo Produto não pode ser nulo").build();
+            return Response.status(400).entity("Tipo Produto não pode ser nula").build();
         }
-        tipoProdutoRepository.createTipoProduto(tipoProduto);
+        int result = tipoProdutoRepository.createTipoProduto(tipoProduto);
+        if (result == 0){
+            return Response.status(400).entity("Falha ao criar Tipo Produto").build();
+        }
         return Response.status(201).entity(tipoProduto).build();
     }
 

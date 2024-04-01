@@ -71,7 +71,7 @@ public class ClienteRepository {
         return cliente;
     }
 
-    public void createCliente(Cliente cliente) {
+    public int createCliente(Cliente cliente) {
         try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
              PreparedStatement st = connection.prepareStatement("INSERT INTO CLIENTE (" +
                      "clie_nome, clie_sobrenome, clie_email, clie_tipo, clie_idioma, clie_pais, " +
@@ -87,11 +87,12 @@ public class ClienteRepository {
             st.setString(6, cliente.getPais());
             st.setString(7, cliente.getTelefone());
 
-            st.executeUpdate();
+            return st.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return 0;
     }
 
     public void updateCliente(Cliente cliente) {
