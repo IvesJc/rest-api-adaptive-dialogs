@@ -1,13 +1,13 @@
 package org.salesforce.models;
 
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
 
-import java.util.Arrays;
-
+@JsonbPropertyOrder({"id", "nome", "descricao", "preco", "tipoPreco", "nivelPlano", "testeGratisDisponivel"
+		, "tipoProdutoId", "recursosId"})
 public class TipoPlano {
 
 	private int id;
-
-	private String nome; 
+	private String nome;
 	private String descricao;
 	private double preco;
 	private String tipoPreco;

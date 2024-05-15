@@ -1,5 +1,8 @@
 package org.salesforce.models;
 
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
+
+@JsonbPropertyOrder({"id", "nome", "sobrenome", "cargo", "email", "telefone", "salario", "empresaId"})
 public class Funcionario {
 
 	private Integer id;

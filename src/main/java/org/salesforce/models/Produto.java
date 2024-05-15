@@ -1,7 +1,10 @@
 package org.salesforce.models;
 
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
+
 import java.util.Date;
 
+@JsonbPropertyOrder({"id", "preco", "status", "testeGratisAte", "tipoProdutoId", "empresaId"})
 public class Produto {
 
 	private int id;
