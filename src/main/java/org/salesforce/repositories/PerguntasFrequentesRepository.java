@@ -1,5 +1,6 @@
 package org.salesforce.repositories;
 
+import org.salesforce.infrastructure.OracleDbConfiguration;
 import org.salesforce.models.Cliente;
 import org.salesforce.models.Empresa;
 import org.salesforce.models.PerguntasFrequentes;
@@ -10,25 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PerguntasFrequentesRepository {
-    public static final String URL_CONNECTION = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL";
-    public static final String USER = "rm553243";
-    public static final String PASSWORD = "180600";
+    public OracleDbConfiguration dbConfig;
 
     public PerguntasFrequentesRepository() {
+        dbConfig = new OracleDbConfiguration();
     }
 
     public List<PerguntasFrequentes> getPerguntasFrequentes() {
         List<PerguntasFrequentes> lista = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement("SELECT * FROM PERGUNTAS_FREQUENTES");
              ResultSet rs = st.executeQuery()) {
 
             while (rs.next()) {
                 PerguntasFrequentes perguntasFrequentes = new PerguntasFrequentes();
-                perguntasFrequentes.setId(rs.getInt("perg_id"));
-                perguntasFrequentes.setPergunta(rs.getString("perg_perguntas"));
-                perguntasFrequentes.setResposta(rs.getString("perg_respostas"));
+                mapResultSetToCliente(perguntasFrequentes, rs);
 
                 lista.add(perguntasFrequentes);
 
@@ -39,10 +38,12 @@ public class PerguntasFrequentesRepository {
         return lista;
     }
 
+
     public PerguntasFrequentes getPergFreqById(int id) {
         PerguntasFrequentes perguntasFrequentes = null;
 
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st =
                      connection.prepareStatement("SELECT * FROM PERGUNTAS_FREQUENTES WHERE perg_id = ?")) {
 
@@ -51,9 +52,7 @@ public class PerguntasFrequentesRepository {
 
             if (rs.next()) {
                 perguntasFrequentes = new PerguntasFrequentes();
-                perguntasFrequentes.setId(rs.getInt("perg_id"));
-                perguntasFrequentes.setPergunta(rs.getString("perg_perguntas"));
-                perguntasFrequentes.setResposta(rs.getString("perg_respostas"));
+                mapResultSetToCliente(perguntasFrequentes, rs);
 
             }
         } catch (SQLException e) {
@@ -63,14 +62,14 @@ public class PerguntasFrequentesRepository {
     }
 
     public int createPergFreq(PerguntasFrequentes perguntasFrequentes) {
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement("INSERT INTO PERGUNTAS_FREQUENTES (" +
                      "perg_perguntas, perg_respostas, FK_TIPO_PRODUTO_tipo_prod_id)" +
                      " VALUES " +
                      "(?, ?, ?)", new String[]{"empresa_id"})) {
 
-            st.setString(1, perguntasFrequentes.getPergunta());
-            st.setString(2, perguntasFrequentes.getResposta());
+            prepareStatementForPergFreqInsert(perguntasFrequentes, st);
             st.setInt(3, perguntasFrequentes.getTipoProdutoId());
 
             return st.executeUpdate();
@@ -81,15 +80,16 @@ public class PerguntasFrequentesRepository {
         return 0;
     }
 
+
     public void updatePergFreq(PerguntasFrequentes perguntasFrequentes) {
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE PERGUNTAS_FREQUENTES " +
                              "SET perg_perguntas = ?, perg_respostas = ? " +
                              "WHERE perg_id = ?" )){
 
-            st.setString(1, perguntasFrequentes.getPergunta());
-            st.setString(2, perguntasFrequentes.getResposta());
+            prepareStatementForPergFreqInsert(perguntasFrequentes, st);
             st.setInt(3, perguntasFrequentes.getId());
 
             st.executeUpdate();
@@ -101,7 +101,8 @@ public class PerguntasFrequentesRepository {
 
     public void deleteById(int id){
 
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement(
                      "DELETE FROM PERGUNTAS_FREQUENTES WHERE perg_id = ?" )){
 
@@ -112,5 +113,16 @@ public class PerguntasFrequentesRepository {
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
+    }
+
+    private static void mapResultSetToCliente(PerguntasFrequentes perguntasFrequentes, ResultSet rs) throws SQLException {
+        perguntasFrequentes.setId(rs.getInt("perg_id"));
+        perguntasFrequentes.setPergunta(rs.getString("perg_perguntas"));
+        perguntasFrequentes.setResposta(rs.getString("perg_respostas"));
+    }
+
+    private static void prepareStatementForPergFreqInsert(PerguntasFrequentes perguntasFrequentes, PreparedStatement st) throws SQLException {
+        st.setString(1, perguntasFrequentes.getPergunta());
+        st.setString(2, perguntasFrequentes.getResposta());
     }
 }

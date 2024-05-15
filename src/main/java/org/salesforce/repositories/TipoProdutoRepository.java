@@ -1,5 +1,6 @@
 package org.salesforce.repositories;
 
+import org.salesforce.infrastructure.OracleDbConfiguration;
 import org.salesforce.models.Empresa;
 import org.salesforce.models.TipoPlano;
 import org.salesforce.models.TipoProduto;
@@ -9,27 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TipoProdutoRepository {
-    public static final String URL_CONNECTION = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL";
-    public static final String USER = "rm553243";
-    public static final String PASSWORD = "180600";
+    public OracleDbConfiguration dbConfig;
 
     public TipoProdutoRepository() {
+        dbConfig = new OracleDbConfiguration();
     }
 
     public List<TipoProduto> getTipoProduto() {
         List<TipoProduto> lista = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement("SELECT * FROM TIPO_PRODUTO");
              ResultSet rs = st.executeQuery()) {
 
             while (rs.next()) {
                 TipoProduto tipoProduto = new TipoProduto();
-                tipoProduto.setId(rs.getInt("tipo_prod_id"));
-                tipoProduto.setNome(rs.getString("tipo_prod_nome"));
-                tipoProduto.setDescricao(rs.getString("tipo_prod_desc"));
-                tipoProduto.setAddOn(rs.getBoolean("tipo_prod_prod_add_on"));
-                tipoProduto.setNomeGrupo(rs.getString("tipo_prod_nome_grupo"));
+                mapResultSetToTipoProduto(tipoProduto, rs);
                 lista.add(tipoProduto);
 
             }
@@ -42,7 +39,8 @@ public class TipoProdutoRepository {
     public TipoProduto getTipoProdutoById(int id) {
         TipoProduto tipoProduto = null;
 
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st =
                      connection.prepareStatement("SELECT * FROM TIPO_PRODUTO WHERE tipo_prod_id = ?")) {
 
@@ -51,11 +49,7 @@ public class TipoProdutoRepository {
 
             if (rs.next()) {
                 tipoProduto = new TipoProduto();
-                tipoProduto.setId(rs.getInt("tipo_prod_id"));
-                tipoProduto.setNome(rs.getString("tipo_prod_nome"));
-                tipoProduto.setDescricao(rs.getString("tipo_prod_desc"));
-                tipoProduto.setAddOn(rs.getBoolean("tipo_prod_prod_add_on"));
-                tipoProduto.setNomeGrupo(rs.getString("tipo_prod_nome_grupo"));
+                mapResultSetToTipoProduto(tipoProduto, rs);
 
             }
         } catch (SQLException e) {
@@ -65,16 +59,14 @@ public class TipoProdutoRepository {
     }
 
     public int createTipoProduto(TipoProduto tipoProduto) {
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PRODUTO (" +
                      "tipo_prod_nome, tipo_prod_desc, tipo_prod_prod_add_on, tipo_prod_nome_grupo)" +
                      " VALUES " +
                      "(?, ?, ?, ?)", new String[]{"empresa_id"})) {
 
-            st.setString(1, tipoProduto.getNome());
-            st.setString(2, tipoProduto.getDescricao());
-            st.setBoolean(3, tipoProduto.isAddOn());
-            st.setString(4, tipoProduto.getNomeGrupo());
+            prepareStatementForTipoProdInsert(tipoProduto, st);
 
             int result = st.executeUpdate();
             ResultSet resultSet = st.getGeneratedKeys();
@@ -93,7 +85,8 @@ public class TipoProdutoRepository {
     }
 
     private void createTipoProdTipoPlanoConnection(TipoProduto tipoProduto){
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement("INSERT INTO TIPO_PROD_TIPO_PLANO_TEM (" +
                      "FK_TIPO_PLANO_tipo_plano_id, FK_TIPO_PRODUTO_tipo_prod_id )" +
                      " VALUES " +
@@ -110,17 +103,15 @@ public class TipoProdutoRepository {
     }
 
     public void updateTipoProduto(TipoProduto tipoProduto) {
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement(
                      "UPDATE TIPO_PRODUTO " +
                              "SET tipo_prod_nome = ?, tipo_prod_desc = ?,  tipo_prod_prod_add_on = ?, " +
                              "tipo_prod_nome_grupo = ? " +
                              "WHERE tipo_prod_id = ?" )){
 
-            st.setString(1, tipoProduto.getNome());
-            st.setString(2, tipoProduto.getDescricao());
-            st.setBoolean(3, tipoProduto.isAddOn());
-            st.setString(4, tipoProduto.getNomeGrupo());
+            prepareStatementForTipoProdInsert(tipoProduto, st);
             st.setInt(5, tipoProduto.getId());
 
             st.executeUpdate();
@@ -132,7 +123,8 @@ public class TipoProdutoRepository {
 
     public void deleteById(int id){
 
-        try (Connection connection = DriverManager.getConnection(URL_CONNECTION, USER, PASSWORD);
+        try (
+            Connection connection = dbConfig.getConnection();
              PreparedStatement st = connection.prepareStatement(
                      "DELETE FROM TIPO_PRODUTO WHERE tipo_prod_id = ?" )){
 
@@ -143,6 +135,21 @@ public class TipoProdutoRepository {
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
+    }
+
+    private static void mapResultSetToTipoProduto(TipoProduto tipoProduto, ResultSet rs) throws SQLException {
+        tipoProduto.setId(rs.getInt("tipo_prod_id"));
+        tipoProduto.setNome(rs.getString("tipo_prod_nome"));
+        tipoProduto.setDescricao(rs.getString("tipo_prod_desc"));
+        tipoProduto.setAddOn(rs.getBoolean("tipo_prod_prod_add_on"));
+        tipoProduto.setNomeGrupo(rs.getString("tipo_prod_nome_grupo"));
+    }
+
+    private static void prepareStatementForTipoProdInsert(TipoProduto tipoProduto, PreparedStatement st) throws SQLException {
+        st.setString(1, tipoProduto.getNome());
+        st.setString(2, tipoProduto.getDescricao());
+        st.setBoolean(3, tipoProduto.isAddOn());
+        st.setString(4, tipoProduto.getNomeGrupo());
     }
 
 }
