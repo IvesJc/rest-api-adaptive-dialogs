@@ -1,0 +1,16 @@
+2024-05-17 21:56:32 [grizzly-http-server-0] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 21:58:57 [grizzly-http-server-1] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 21:59:35 [grizzly-http-server-2] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 21:59:46 [grizzly-http-server-3] INFO  org.salesforce.Main - [PUT] - 201 - OK
+2024-05-17 22:00:06 [grizzly-http-server-4] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 22:00:22 [grizzly-http-server-5] INFO  org.salesforce.Main - [DELETE] - 204 - No content
+2024-05-17 22:00:28 [grizzly-http-server-6] INFO  org.salesforce.Main - 404 - Cliente NOT FOUND
+2024-05-17 23:21:49 [grizzly-http-server-0] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 23:21:57 [grizzly-http-server-1] INFO  org.salesforce.Main - [POST] - 200 - OK
+2024-05-17 23:22:00 [grizzly-http-server-2] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 23:22:14 [grizzly-http-server-3] INFO  org.salesforce.Main - [PUT] - 200 - OK
+2024-05-17 23:22:20 [grizzly-http-server-4] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 23:23:03 [grizzly-http-server-5] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 23:23:32 [grizzly-http-server-6] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 23:28:19 [grizzly-http-server-0] INFO  org.salesforce.Main - [GET] - 200 - OK
+2024-05-17 23:34:44 [grizzly-http-server-0] INFO  org.salesforce.Main - [GET] - 200 - OK

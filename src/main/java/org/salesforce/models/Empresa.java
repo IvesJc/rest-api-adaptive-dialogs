@@ -10,7 +10,7 @@ public class Empresa {
 	private String tipoIndustria;
 	private String tamanho;
 	private String paisSede;
-	private Integer clienteId;
+	private Cliente clienteId;
 	private Integer funcionarioId;
 	private Integer produtoId;
 
@@ -18,7 +18,19 @@ public class Empresa {
 		super();
 	}
 
-	public Empresa(int id, String nome, String tipoIndustria, String tamanho, String paisSede, Integer clienteId, Integer funcionarioId, Integer produtoId) {
+//	public Empresa(int id, String nome, String tipoIndustria, String tamanho, String paisSede, Integer clienteId, Integer funcionarioId, Integer produtoId) {
+//		this.id = id;
+//		this.nome = nome;
+//		this.tipoIndustria = tipoIndustria;
+//		this.tamanho = tamanho;
+//		this.paisSede = paisSede;
+//		this.clienteId = clienteId;
+//		this.funcionarioId = funcionarioId;
+//		this.produtoId = produtoId;
+//	}
+
+
+	public Empresa(int id, String nome, String tipoIndustria, String tamanho, String paisSede, Cliente clienteId, Integer funcionarioId, Integer produtoId) {
 		this.id = id;
 		this.nome = nome;
 		this.tipoIndustria = tipoIndustria;
@@ -62,11 +74,20 @@ public class Empresa {
 		this.paisSede = paisSede;
 	}
 
-	public Integer getClienteId() {
+//	public Integer getClienteId() {
+//		return clienteId;
+//	}
+//
+//	public void setClienteId(Integer clienteId) {
+//		this.clienteId = clienteId;
+//	}
+
+
+	public Cliente getClienteId() {
 		return clienteId;
 	}
 
-	public void setClienteId(Integer clienteId) {
+	public void setClienteId(Cliente clienteId) {
 		this.clienteId = clienteId;
 	}
 

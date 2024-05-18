@@ -53,7 +53,6 @@ public class EmpresaRepository {
             if (rs.next()) {
                 empresa = new Empresa();
                 mapResultSetToEmpresa(empresa, rs);
-
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -74,7 +73,7 @@ public class EmpresaRepository {
                      "(?, ?, ?, ?, ?)", new String[]{"empresa_id"})) {
 
             prepareStatementForEmpresaInsert(empresa, st);
-            st.setInt(5, empresa.getClienteId());
+            st.setInt(5, empresa.getClienteId().getId());
 
             int result = st.executeUpdate();
             ResultSet resultSet = st.getGeneratedKeys();
